@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo App</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.7/axios.min.js"></script>
+</head>
+
+<body>
+
+    <!-- SignUp Section -->
+    <div id="signup-section">
+        <h2>SignUp</h2>
+        <input id="signup-username" placeholder="Username" type="text" name="username" />
+        <input id="signup-password" placeholder="Password" type="password" />
+        <button id="signup-button" onclick="signUp()">Sign Up</button>
+    </div>
+
+    <!-- SignIn Section -->
+    <div id="signin-section">
+        <h2>SignIn</h2>
+        <input id="signin-username" placeholder="Username" type="text" />
+        <input id="signin-password" placeholder="Password" type="password" />
+        <button id="signin-button" onclick="signIn()">Sign In</button>
+    </div>
+
+    <!-- Todo Section -->
+    <div id="todos-section" class="section" style="display: none;">
+        <h2>Todo List</h2>
+        <div id="todo-input">
+            <input id="todo-title" placeholder="Todo Title" type="text">
+            <input id="todo-description" placeholder="Description" type="text">
+            <button onclick="createTodo()">Add Todo</button>
+        </div>
+        <ul id="todo-list"></ul>
+    </div>
+
+    <script>
+        //     // SignUp logic
+        //     async function signUp() {
+        //         try {
+        //             const username = document.getElementById("signup-username").value;
+        //             const password = document.getElementById("signup-password").value;
+
+        //             const response = await axios.post("http://localhost:3000/signup", {
+        //                 username: username,
+        //                 password: password
+        //             });
+
+        //             localStorage.setItem("token", response.data.token);
+
+        //             document.getElementById("signup-section").style.display = "none";
+        //             document.getElementById("signin-section").style.display = "block";
+        //         } catch (error) {
+        //             alert("Sign-up failed");
+        //         }
+        //     }
+
+        //     // SignIn logic
+        //     async function signIn() {
+        //         try {
+        //             const username = document.getElementById("signin-username").value;
+        //             const password = document.getElementById("signin-password").value;
+
+        //             const response = await axios.post("http://localhost:3000/signin", {
+        //                 username: username,
+        //                 password: password
+        //             });
+
+        //             localStorage.setItem("token", response.data.token);
+
+        //             document.getElementById("signin-section").style.display = "none";
+        //             document.getElementById("signup-section").style.display = "none";
+        //             document.getElementById("todos-section").style.display = "block";
+
+        //             getTodos();
+        //         } catch (error) {
+        //             alert("Sign-in failed");
+        //         }
+        //     }
+
+        //     // Fetch Todos
+        //     async function getTodos() {
+        //         try {
+        //             const token = localStorage.getItem("token");
+        //             const response = await axios.get("http://localhost:3000/todos", {
+        //                 headers: { 'Authorization': `Bearer ${token}` }
+        //             });
+
+        //             const todos = response.data.todos;
+        //             const todoList = document.getElementById("todo-list");
+        //             todoList.innerHTML = "";
+
+        //             todos.forEach(todo => {
+        //                 const todoDiv = document.createElement("div");
+        //                 todoDiv.classList.add("todo");
+        //                 todoDiv.setAttribute("data-id", todo.id); // Set data-id attribute for easy access
+
+        //                 const checkbox = document.createElement("input");
+        //                 checkbox.type = "checkbox";
+        //                 checkbox.checked = todo.done;
+        //                 checkbox.onchange = () => toggleDone(todo.id, checkbox.checked);
+
+        //                 const title = document.createElement("h3");
+        //                 title.innerText = todo.title;
+        //                 if (todo.done) title.classList.add("strikethrough");
+
+        //                 const description = document.createElement("p");
+        //                 description.innerText = todo.description;
+
+        //                 const editButton = document.createElement("button");
+        //                 editButton.innerHTML = "✏️";
+        //                 editButton.onclick = () => editTodo(todo.id); // Pass todo ID to editTodo
+
+        //                 const deleteButton = document.createElement("button");
+        //                 deleteButton.innerHTML = "❌";
+        //                 deleteButton.onclick = () => deleteTodo(todo.id);
+
+        //                 todoDiv.appendChild(checkbox);
+        //                 todoDiv.appendChild(title);
+        //                 todoDiv.appendChild(description);
+        //                 todoDiv.appendChild(editButton);
+        //                 todoDiv.appendChild(deleteButton);
+
+        //                 todoList.appendChild(todoDiv);
+        //             });
+        //         } catch (error) {
+        //             alert("Failed to fetch todos.");
+        //         }
+        //     }
+
+        //     // Create Todo
+        //     async function createTodo() {
+        //         try {
+        //             const token = localStorage.getItem("token");
+        //             const title = document.getElementById("todo-title").value;
+        //             const description = document.getElementById("todo-description").value;
+
+        //             await axios.post("http://localhost:3000/todos", {
+        //                 title: title,
+        //                 description: description,
+        //                 done: false
+        //             }, {
+        //                 headers: { 'Authorization': `Bearer ${token}` }
+        //             });
+
+        //             document.getElementById("todo-title").value = "";
+        //             document.getElementById("todo-description").value = "";
+
+        //             getTodos();
+        //         } catch (error) {
+        //             alert("Failed to create todo.");
+        //         }
+        //     }
+
+        //     // Toggle Todo Done Status
+        //     async function toggleDone(id, done) {
+        //         const token = localStorage.getItem("token");
+        //         await axios.put(`http://localhost:3000/todos/${id}`, {
+        //             done: done
+        //         }, {
+        //             headers: { 'Authorization': `Bearer ${token}` }
+        //         });
+
+        //         getTodos();
+        //     }
+
+        //     // Edit Todo
+        //     async function editTodo(id) {
+        //         const token = localStorage.getItem("token");
+        //         const todoDiv = document.querySelector(`[data-id='${id}']`);
+        //         const title = todoDiv.querySelector("h3").innerText;
+        //         const description = todoDiv.querySelector("p").innerText;
+        //         const done = todoDiv.querySelector("input[type='checkbox']").checked;
+
+        //         // Save the original values for cancel functionality
+        //         todoDiv.dataset.originalTitle = title;
+        //         todoDiv.dataset.originalDescription = description;
+        //         todoDiv.dataset.originalDone = done;
+
+        //         todoDiv.innerHTML = `
+        //             <input id="edit-title" value="${title}" placeholder="Title" />
+        //             <input id="edit-description" value="${description}" placeholder="Description" />
+        //             <input type="checkbox" id="edit-done" ${done ? 'checked' : ''}/> Mark as Done
+        //             <button id="update-todo-btn" onclick="saveEdit('${id}' )">Save</button>
+        //             <button id="cancel-todo-btn" onclick="cancelEdit('${id} ')">Cancel</button>
+        //         `;
+        //     }
+
+        //     // Save Todo Edits
+        //     async function saveEdit(id) {
+        //         const token = localStorage.getItem("token");
+        //         const title = document.getElementById("edit-title").value;
+        //         const description = document.getElementById("edit-description").value;
+        //         const done = document.getElementById("edit-done").checked;
+
+        //         await axios.put(`http://localhost:3000/todos/${id}`, {
+        //             title,
+        //             description,
+        //             done
+        //         }, {
+        //             headers: { 'Authorization': `Bearer ${token}` }
+        //         });
+
+        //         getTodos();
+        //     }
+
+        //     // Cancel Edit
+        //     function cancelEdit(id) {
+        //         const todoDiv = document.querySelector(`[data-id='${id}']`);
+        //         const originalTitle = todoDiv.dataset.originalTitle;
+        //         const originalDescription = todoDiv.dataset.originalDescription;
+        //         const originalDone = todoDiv.dataset.originalDone === 'true';
+
+        //         todoDiv.innerHTML = `
+        //             <input type="checkbox" ${originalDone ? 'checked' : ''} onchange="toggleDone('${id}', this.checked)">
+        //             <h3 class="${originalDone ? 'strikethrough' : ''}">${originalTitle}</h3>
+        //             <p>${originalDescription}</p>
+        //             <button onclick="editTodo('${id}')">✏️</button>
+        //             <button onclick="deleteTodo('${id}')">❌</button>
+        //         `;
+        //     }
+
+        //     // Delete Todo
+        //     async function deleteTodo(id) {
+        //         const token = localStorage.getItem("token");
+        //         await axios.delete(`http://localhost:3000/todos/${id}`, {
+        //             headers: { 'Authorization': `Bearer ${token}` }
+        //         });
+
+        //         getTodos();
+        //     }
+        // SignUp logic
+        async function signUp() {
+            try {
+                const username = document.getElementById("signup-username").value;
+                const password = document.getElementById("signup-password").value;
+
+                const response = await axios.post("http://localhost:3000/signup", {
+                    username: username,
+                    password: password
+                });
+
+                // localStorage.setItem("token", response.data.token);
+
+                document.getElementById("signup-section").style.display = "none";
+                document.getElementById("signin-section").style.display = "block";
+            } catch (error) {
+                alert("Sign-up failed");
+            }
+        }
+
+        // SignIn logic
+        async function signIn() {
+            try {
+                const username = document.getElementById("signin-username").value;
+                const password = document.getElementById("signin-password").value;
+
+                const response = await axios.post("http://localhost:3000/signin", {
+                    username: username,
+                    password: password
+                });
+
+                localStorage.setItem("token", response.data.token);
+
+                document.getElementById("signin-section").style.display = "none";
+                document.getElementById("signup-section").style.display = "none";
+                document.getElementById("todos-section").style.display = "block";
+
+                getTodos();
+            } catch (error) {
+                alert("Sign-in failed");
+            }
+        }
+
+        // Fetch Todos
+        async function getTodos() {
+            try {
+                const token = localStorage.getItem("token");
+                const response = await axios.get("http://localhost:3000/todos", {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const todos = response.data.todos;
+                const todoList = document.getElementById("todo-list");
+                todoList.innerHTML = "";
+
+                todos.forEach(todo => {
+                    const todoDiv = document.createElement("div");
+                    todoDiv.classList.add("todo");
+                    todoDiv.setAttribute("data-id", todo.id); // Set data-id attribute for easy access
+
+                    const checkbox = document.createElement("input");
+                    checkbox.type = "checkbox";
+                    checkbox.checked = todo.done;
+                    checkbox.onchange = () => toggleDone(todo.id, checkbox.checked);
+
+                    const title = document.createElement("h3");
+                    title.innerText = todo.title;
+                    if (todo.done) title.classList.add("strikethrough");
+
+                    const description = document.createElement("p");
+                    description.innerText = todo.description;
+
+                    const editButton = document.createElement("button");
+                    editButton.innerHTML = "✏️";
+                    editButton.onclick = () => editTodo(todo.id); // Pass todo ID to editTodo
+
+                    const deleteButton = document.createElement("button");
+                    deleteButton.innerHTML = "❌";
+                    deleteButton.onclick = () => deleteTodo(todo.id);
+
+                    todoDiv.appendChild(checkbox);
+                    todoDiv.appendChild(title);
+                    todoDiv.appendChild(description);
+                    todoDiv.appendChild(editButton);
+                    todoDiv.appendChild(deleteButton);
+
+                    todoList.appendChild(todoDiv);
+                });
+            } catch (error) {
+                alert("Failed to fetch todos.");
+            }
+        }
+
+        // Create Todo
+        async function createTodo() {
+            try {
+                const token = localStorage.getItem("token");
+                const title = document.getElementById("todo-title").value;
+                const description = document.getElementById("todo-description").value;
+
+                await axios.post("http://localhost:3000/todos", {
+                    title: title,
+                    description: description,
+                    done: false
+                }, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                document.getElementById("todo-title").value = "";
+                document.getElementById("todo-description").value = "";
+
+                getTodos();
+            } catch (error) {
+                alert("Failed to create todo.");
+            }
+        }
+
+        // Toggle Todo Done Status
+        async function toggleDone(id, done) {
+            const token = localStorage.getItem("token");
+            await axios.put(`http://localhost:3000/todos/${id}`, {
+                done: done
+            }, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            getTodos();
+        }
+
+        // Edit Todo
+        async function editTodo(id) {
+            const token = localStorage.getItem("token");
+            const todoDiv = document.querySelector(`[data-id='${id}']`);
+            const title = todoDiv.querySelector("h3").innerText;
+            const description = todoDiv.querySelector("p").innerText;
+            const done = todoDiv.querySelector("input[type='checkbox']").checked;
+
+            // Save the original values for cancel functionality
+            todoDiv.dataset.originalTitle = title;
+            todoDiv.dataset.originalDescription = description;
+            todoDiv.dataset.originalDone = done;
+
+            // Set the inner HTML to the edit form without the checkbox
+            todoDiv.innerHTML = `
+            <input id="edit-title" value="${title}" placeholder="Title" />
+            <input id="edit-description" value="${description}" placeholder="Description" />
+            <button id="update-todo-btn" onclick="saveEdit('${id}')">Save</button>
+            <button id="cancel-todo-btn" onclick="cancelEdit('${id}')">Cancel</button>
+        `;
+        }
+
+        // Save Todo Edits
+        async function saveEdit(id) {
+            const token = localStorage.getItem("token");
+            const title = document.getElementById("edit-title").value;
+            const description = document.getElementById("edit-description").value;
+            const done = false; // We do not allow changing the done status in edit mode
+
+            await axios.put(`http://localhost:3000/todos/${id}`, {
+                title,
+                description,
+                done
+            }, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            getTodos();
+        }
+
+        // Cancel Edit
+        function cancelEdit(id) {
+            const todoDiv = document.querySelector(`[data-id='${id}']`);
+            const originalTitle = todoDiv.dataset.originalTitle;
+            const originalDescription = todoDiv.dataset.originalDescription;
+            const originalDone = todoDiv.dataset.originalDone === 'true';
+
+            // Restore the original todo structure
+            todoDiv.innerHTML = `
+            <input type="checkbox" ${originalDone ? 'checked' : ''} onchange="toggleDone('${id}', this.checked)">
+            <h3 class="${originalDone ? 'strikethrough' : ''}">${originalTitle}</h3>
+            <p>${originalDescription}</p>
+            <button onclick="editTodo('${id}')">✏️</button>
+            <button onclick="deleteTodo('${id}')">❌</button>
+        `;
+        }
+
+        // Delete Todo
+        async function deleteTodo(id) {
+            const token = localStorage.getItem("token");
+            await axios.delete(`http://localhost:3000/todos/${id}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            getTodos();
+        }
+    </script>
+
+</body>
+
+</html>

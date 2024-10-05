@@ -1,0 +1,6 @@
+
+# Ignore these files
+/public/doubts.txt
+/node_modules
+/.env
+/.vscode
